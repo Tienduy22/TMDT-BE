@@ -7,7 +7,11 @@ router.post("/register", controller.register);
 
 router.post("/login", controller.login);
 
-router.get("/profile/:id", controller.profile);
+router.post("/logout", controller.logout);
+
+router.patch("/update/:id", controller.update)
+
+router.get("/profile/:id", authenticateToken, controller.profile);
 
 router.post("/refresh_token", controller.refreshToken)
 

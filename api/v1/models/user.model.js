@@ -5,11 +5,11 @@ const userSchema = new mongoose.Schema({
   fullName: String,
   email: String,
   password: String,
+  address: String,
   phone: String,
   token: String,
   refreshToken: String,
   avatar: String,
-  role_id: String,
   status: String,
   deleted: {
     type: Boolean,

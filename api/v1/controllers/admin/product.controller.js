@@ -11,6 +11,10 @@ module.exports.index = async (req, res) => {
   if (req.query.material) {
     find.material = req.query.material;
   }
+
+  if (req.query.productCategory) {
+    find.product_category_id = req.query.productCategory;
+  }
   // Search
   let objectSearch = searchHelper(req.query);
 
@@ -22,7 +26,7 @@ module.exports.index = async (req, res) => {
   //Pagination
   let initPagination = {
     currentPage: 1,
-    limitItems: 4,
+    limitItems: 9,
   };
 
   const countProducts = await Product.countDocuments(find);
@@ -49,7 +53,10 @@ module.exports.index = async (req, res) => {
     .skip(objectPagination.skip);
   } 
 
-  res.json(products);
+  res.json({
+    code:200,
+    products
+  });
 };
 
 // [GET] /api/v1/products/detail/:id

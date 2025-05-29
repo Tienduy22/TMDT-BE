@@ -16,7 +16,7 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: 'http://localhost:3001',  // Cho phép tất cả các domain
+    origin: 'http://localhost:3001',  
     credentials: true,
 }));
 
