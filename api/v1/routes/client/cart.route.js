@@ -5,8 +5,6 @@ const controller = require("../../controllers/client/cart.controller");
 
 router.get("/:userId", controller.cart);
 
-router.post("/create/:userId", controller.create);
-
 router.patch("/update/:userId", controller.update);
 
 router.patch("/delete/:userId", controller.delete);

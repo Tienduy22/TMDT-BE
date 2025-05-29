@@ -1,62 +1,47 @@
-const Cart = require("../../models/cart.model")
-
+const Cart = require("../../models/cart.model");
 
 // [GET] api/v1/cart/:userId
 module.exports.cart = async (req, res) => {
     try {
         const user_id = req.params.userId;
-        const cart = await Cart.findOne({user_id})
-        if(cart) {
+        const cart = await Cart.findOne({ user_id });
+        if (cart) {
             res.status(200).json({
-                cart
-            })
+                cart,
+            });
         } else {
-            res.status(400).json({
-                message: "Not found cart"
-            })
+            const cart = new Cart({
+                user_id: user_id,
+                products: [],
+            });
+
+            await cart.save();
+
+            res.status(200).json({
+                cart,
+            });
         }
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 };
 
-// [POST] api/v1/cart/create/:userId
-module.exports.create = async (req, res) => {
-    try {
-        const user_id = req.params.userId
-
-        const cart = new Cart({
-            user_id:user_id,
-            products: [],
-        })
-
-        await cart.save();
-
-        res.status(200).json({
-            cart
-        })
-
-    } catch (error) {
-        console.log(error)
-    }
-};
 
 // [PATCH] cart/upadte/:userId
 module.exports.update = async (req, res) => {
     try {
-        const user_id = req.params.userId
+        const user_id = req.params.userId;
 
         const product = req.body.product;
 
-        console.log(product.product_id)
+        console.log(product.product_id);
 
         let newProduct = {
             product_id: "",
             name: "",
-            image:"",
+            image: "",
             amount: 0,
             price: 0,
-
         };
 
         newProduct.product_id = product.product_id;
@@ -65,67 +50,65 @@ module.exports.update = async (req, res) => {
         newProduct.amount = product.amount;
         newProduct.price = product.price;
 
-        
-        let check=0
+        let check = 0;
 
-        const cart = await Cart.findOne({user_id: user_id})
+        const cart = await Cart.findOne({ user_id: user_id });
 
-        if(!cart) {
+        if (!cart) {
             res.status(400).json({
-                message: "Not found cart"
-            })
+                message: "Not found cart",
+            });
         }
 
         cart.products.forEach((item) => {
-            if(item.product_id === product.product_id) {
-                item.amount+=product.amount
-                check=1
-            } 
+            if (item.product_id === product.product_id) {
+                item.amount += product.amount;
+                check = 1;
+            }
         });
 
-        if(check==0) {
-            console.log(newProduct)
-            cart.products.push(newProduct)
+        if (check == 0) {
+            console.log(newProduct);
+            cart.products.push(newProduct);
         }
 
         await cart.save();
 
         res.status(200).json({
-            cart
-        })
-
+            cart,
+        });
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 };
 
 // [DELETE] cart/delete/:userId
-module.exports.delete = async (req,res) => {
+module.exports.delete = async (req, res) => {
     try {
-        const userId = req.params.userId
+        const userId = req.params.userId;
 
+        const { productId } = req.body.data;
 
-        const {productId} = req.body.data
-
-        console.log(productId)
+        console.log(productId);
 
         const cart = await Cart.findOne({
-            user_id: userId
-        })
+            user_id: userId,
+        });
 
-        if(!cart) {
+        if (!cart) {
             res.status(400).json({
-                message: "Not found cart"
-            })
+                message: "Not found cart",
+            });
         } else {
-            cart.products = cart.products.filter(item => item.product_id !== productId);
+            cart.products = cart.products.filter(
+                (item) => item.product_id !== productId
+            );
             await cart.save();
             res.status(200).json({
-                message: "Success deleted"
-            })
-        };
-
+                message: "Success deleted",
+            });
+        }
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
-}
+};
