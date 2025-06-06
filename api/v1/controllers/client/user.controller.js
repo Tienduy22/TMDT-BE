@@ -6,6 +6,81 @@ const sendMail = require("../../../../helpers/sendMail");
 const jwtHelper = require("../../../../helpers/jwt.helper");
 const jwt = require("jsonwebtoken");
 
+//[GET] api/v1/user
+module.exports.userGet = async (req, res) => {
+    try {
+        const users = await User.find();
+        if (users) {
+            res.status(200).json({
+                users,
+            });
+        } else {
+            res.status(400).json({
+                message: "Khong co user",
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: error,
+        });
+    }
+};
+
+//[GET] api/v1/user/detail/:user_id
+module.exports.detail = async (req, res) => {
+    try {
+        const { user_id } = req.params;
+        const user = await User.findById(user_id);
+        if (user) {
+            res.status(200).json({
+                user,
+            });
+        } else {
+            res.status(400).json({
+                message: "Khong co user",
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: error,
+        });
+    }
+};
+
+//[PATCH] api/v1/user/edit/:user_id
+module.exports.edit = async (req, res) => {
+    try {
+        const { user_id } = req.params;
+        const user = await User.updateOne({ _id: user_id }, req.body);
+        res.status(200).json({
+            code: 200,
+            message: "Cập nhật thành công",
+            user,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error,
+        });
+    }
+};
+
+//[DELETE] api/v1/user/delete/user_id
+module.exports.delete = async (req, res) => {
+    try {
+        const { user_id } = req.params;
+        await User.deleteOne({ _id: user_id });
+
+        res.status(200).json({
+            code: 200,
+            message: "Xóa user thành công"
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: error,
+        });
+    }
+};
+
 // [POST] api/v1/user/register
 module.exports.register = async (req, res) => {
     req.body.password = md5(req.body.password);
@@ -95,7 +170,7 @@ module.exports.update = async (req, res) => {
         const id = req.params.id;
         const { name, address, phone, email } = req.body;
 
-        const user = await User.findOne({_id:id})
+        const user = await User.findOne({ _id: id });
         await User.updateOne(
             { _id: id },
             { fullName: name, address: address, phone: phone, email: email }
@@ -103,8 +178,8 @@ module.exports.update = async (req, res) => {
 
         res.status(200).json({
             user: user,
-            message: "Cập nhật user thành công"
-        })
+            message: "Cập nhật user thành công",
+        });
     } catch (error) {
         return res.status(404).json({
             message: "error",

@@ -87,9 +87,10 @@ module.exports.delete = async (req, res) => {
     try {
         const userId = req.params.userId;
 
-        const { productId } = req.body.data;
+        const { productId } = req.body;
 
-        console.log(productId);
+        console.log("OKJ")
+
 
         const cart = await Cart.findOne({
             user_id: userId,

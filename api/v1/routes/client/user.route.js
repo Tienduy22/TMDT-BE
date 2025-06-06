@@ -3,6 +3,14 @@ const router = express.Router();
 const controller = require("../../controllers/client/user.controller");
 const authenticateToken = require("../../../../middleware/auth.middleware");
 
+router.get("/", controller.userGet);
+
+router.get("/detail/:user_id", controller.detail);
+
+router.patch("/edit/:user_id", controller.edit);
+
+router.delete("/delete/:user_id", controller.delete);
+
 router.post("/register", controller.register);
 
 router.post("/login", controller.login);

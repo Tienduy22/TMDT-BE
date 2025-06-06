@@ -20,6 +20,7 @@ const orderSchema = new mongoose.Schema(
                 image: String,
             }
         ],
+        status:String,
         totalPrice: Number,
         payment: String,
         deleted: {

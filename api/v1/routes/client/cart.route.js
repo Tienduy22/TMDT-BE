@@ -7,6 +7,6 @@ router.get("/:userId", controller.cart);
 
 router.patch("/update/:userId", controller.update);
 
-router.patch("/delete/:userId", controller.delete);
+router.delete("/delete/:userId", controller.delete);
 
 module.exports = router;

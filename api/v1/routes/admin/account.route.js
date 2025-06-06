@@ -12,4 +12,6 @@ router.patch("/edit/:id", controller.edit)
 
 router.delete("/delete/:id", controller.delete)
 
+router.post("/login", controller.loginAdmin)
+
 module.exports = router;

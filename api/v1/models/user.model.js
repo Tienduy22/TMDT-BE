@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema({
   refreshToken: String,
   avatar: String,
   status: String,
+  totalOrder: Number,
   deleted: {
     type: Boolean,
     default: false
