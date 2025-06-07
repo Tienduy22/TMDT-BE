@@ -5,7 +5,11 @@ const controller = require("../../controllers/client/order.controller");
 
 router.get("/", controller.getOrder)
 
+router.get("/refund", controller.getRefundProduct)
+
 router.post("/paypal-transaction-complete", controller.paypalComplete);
+
+router.post("/cash-on-delivery", controller.cashOnDelivery);
 
 router.get("/:userId", controller.getOrderOfUser)
 

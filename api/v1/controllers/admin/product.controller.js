@@ -84,6 +84,26 @@ module.exports.count = async (req, res) => {
     }
 };
 
+//[GET] /api/v1/products/popular
+module.exports.popular = async (req, res) => {
+    try {
+        const productFeatured = await Product.find({
+            featured: "1",
+        });
+        if (productFeatured) {
+            res.status(200).json({
+                productFeatured,
+            });
+        } else {
+            res.status(400).json({
+                message: "Không có sản phẩm nào nổi bật",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 // [GET] /api/v1/products/detail/:id
 module.exports.detail = async (req, res) => {
     try {
@@ -125,20 +145,53 @@ module.exports.changeStatus = async (req, res) => {
     }
 };
 
+//[PATCH] /api/v1/admin/products/stock
+module.exports.updateStock = async (req, res) => {
+    try {
+        const productsBuy = req.body;
+        let hasError = false;
+
+        for (const productBuy of productsBuy) {
+            const result = await Product.updateOne(
+                { _id: productBuy.product_id },
+                { $inc: { stock: -productBuy.amount } }
+            );
+
+            if (result.modifiedCount === 0) {
+                hasError = true;
+                throw new Error(
+                    `Cập nhật stock thất bại cho sản phẩm ${productBuy.product_id}`
+                );
+            }
+        }
+
+        if (!hasError) {
+            res.json({
+                code: 200,
+                message: "Cập nhật stock thành công",
+            });
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: error,
+        });
+    }
+};
+
 //[POST] /api/v1/products/create
 
 module.exports.create = async (req, res) => {
     try {
-
         const count = await Product.countDocuments();
-        
-        if(req.body.position){
-            req.body.position=count+1;
+
+        if (req.body.position) {
+            req.body.position = count + 1;
         }
 
         const product = new Product({
             thumbnail: req.body.image,
-            ...req.body
+            ...req.body,
         });
 
         const data = await product.save();
@@ -153,7 +206,7 @@ module.exports.create = async (req, res) => {
             code: 400,
             message: error,
         });
-        console.log(error)
+        console.log(error);
     }
 };
 
@@ -222,14 +275,12 @@ module.exports.recommend = async (req, res) => {
             const productIds = response.data.products;
 
             if (productIds && productIds.length > 0) {
-
                 products = await Product.find({
                     _id: { $in: productIds },
                     deleted: false,
                 });
             }
         } else {
-            
             const currentProduct = await Product.findOne({
                 _id: currentProductId,
                 deleted: false,

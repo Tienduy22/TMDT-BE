@@ -26,7 +26,6 @@ module.exports.cart = async (req, res) => {
     }
 };
 
-
 // [PATCH] cart/upadte/:userId
 module.exports.update = async (req, res) => {
     try {
@@ -68,9 +67,44 @@ module.exports.update = async (req, res) => {
         });
 
         if (check == 0) {
-            console.log(newProduct);
             cart.products.push(newProduct);
         }
+
+        await cart.save();
+
+        res.status(200).json({
+            cart,
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+//[PATCH] cart/update_quantity/:userId
+module.exports.updateQuantity = async (req, res) => {
+    try {
+        const user_id = req.params.userId;
+        const keyword = req.query.keyword;
+        const product_id = req.body.product_id;
+
+        const cart = await Cart.findOne({ user_id: user_id });
+
+        if (!cart) {
+            res.status(400).json({
+                message: "Not found cart",
+            });
+        }
+
+        cart.products.forEach((item) => {
+            if (item.product_id === product_id) {
+                if (keyword === "increase") {
+                    item.amount += 1;
+                }
+                if (keyword === "decrease") {
+                    item.amount -= 1;
+                }
+            }
+        });
 
         await cart.save();
 
@@ -89,9 +123,6 @@ module.exports.delete = async (req, res) => {
 
         const { productId } = req.body;
 
-        console.log("OKJ")
-
-
         const cart = await Cart.findOne({
             user_id: userId,
         });
@@ -109,6 +140,29 @@ module.exports.delete = async (req, res) => {
                 message: "Success deleted",
             });
         }
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// [DELETE] cart/delete/item_cart/:userId
+module.exports.deleteItemCart = async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        const cart = await Cart.updateOne(
+            {
+                user_id: userId,
+            },
+            {
+                products: [],
+            }
+        );
+
+        res.status(200).json({
+            message: "Xóa toàn bộ sản phẩm trong giỏ hàng",
+            cart
+        });
     } catch (error) {
         console.log(error);
     }

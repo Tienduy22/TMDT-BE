@@ -8,6 +8,7 @@ const productCategorySchema = new mongoose.Schema(
         title: String,
         position: Number,
         thumbnail: String,
+        quantity: Number,
         slug: {
             type: String,
             slug: "title",

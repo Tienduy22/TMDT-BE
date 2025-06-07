@@ -1,4 +1,5 @@
 const ProductCategory = require("../../models/product-category.model");
+const Product = require("../../models/product.model");
 const paginationHelper = require("../../../../helpers/pagination.helper");
 const searchHelper = require("../../../../helpers/search.helper");
 
@@ -9,6 +10,10 @@ module.exports.index = async (req, res) => {
     };
 
     const productCategories = await ProductCategory.find(find);
+
+    for(const category of productCategories){
+        category.quantity = await Product.countDocuments({product_category_id: category._id})
+    }
 
     res.json(productCategories);
 };

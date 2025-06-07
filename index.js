@@ -20,6 +20,8 @@ app.use(cors({
     credentials: true,
 }));
 
+
+
 routeAdmin(app);
 routeClient(app);
 

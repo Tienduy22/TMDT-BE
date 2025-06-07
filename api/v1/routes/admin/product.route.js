@@ -7,6 +7,10 @@ router.get("/", controller.index)
 
 router.get("/count", controller.count)
 
+router.get("/popular", controller.popular)
+
+router.patch("/stock", controller.updateStock)
+
 router.get("/detail/:id", controller.detail)
 
 router.patch("/change-status/:id", controller.changeStatus)
