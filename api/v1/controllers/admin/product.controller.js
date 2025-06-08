@@ -16,6 +16,14 @@ module.exports.index = async (req, res) => {
     if (req.query.productCategory) {
         find.product_category_id = req.query.productCategory;
     }
+
+    if (req.query.priceRange) {
+        const priceRange = req.query.priceRange.split("-");
+        find.price = {
+            $gte: parseInt(priceRange[0]),
+            $lte: parseInt(priceRange[1]),
+        };
+    }
     // Search
     let objectSearch = searchHelper(req.query);
 
@@ -40,15 +48,18 @@ module.exports.index = async (req, res) => {
     //Pagination
 
     // Sort
-    const sort = {};
 
-    if (req.query.sortKey && req.query.sortValue) {
-        sort[req.query.sortKey] = req.query.sortValue;
+    let sort = {};
+
+    if (req.query.sort) {
+        const keysort = req.query.sort.split("-");
+        sort[keysort[0]] = keysort[1] === "asc" ? 1 : -1;
     }
     // Sort
     let products = await Product.find(find).sort(sort);
     if (req.query.page) {
         products = await Product.find(find)
+            .sort(sort)
             .limit(objectPagination.limitItems)
             .skip(objectPagination.skip);
     }
@@ -268,18 +279,21 @@ module.exports.recommend = async (req, res) => {
         const userId = req.query.userId;
         const currentProductId = req.query.currentProductId;
         let products = [];
-        if (userId) {
+        let productIds = [];
+
+        try {
             const response = await axios.get(
                 `http://localhost:5001/recommend?user_id=${userId}`
             );
-            const productIds = response.data.products;
-
-            if (productIds && productIds.length > 0) {
-                products = await Product.find({
-                    _id: { $in: productIds },
-                    deleted: false,
-                });
-            }
+            productIds = response.data?.products || [];
+        } catch (err) {
+            console.warn("Không gọi được AI recommend:", err.message);
+        }
+        if (productIds.length > 0) {
+            products = await Product.find({
+                _id: { $in: productIds },
+                deleted: false,
+            });
         } else {
             const currentProduct = await Product.findOne({
                 _id: currentProductId,
