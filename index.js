@@ -16,7 +16,7 @@ const port = 3000;
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(cors({
-    origin: 'http://localhost:3001',  
+    origin: process.env.FRONTEND_URL,
     credentials: true,
 }));
 
