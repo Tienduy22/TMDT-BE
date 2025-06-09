@@ -7,6 +7,8 @@ router.get("/", controller.getOrder)
 
 router.get("/refund", controller.getRefundProduct)
 
+router.get("/new", controller.getNewOrder)
+
 router.post("/paypal-transaction-complete", controller.paypalComplete);
 
 router.post("/cash-on-delivery", controller.cashOnDelivery);

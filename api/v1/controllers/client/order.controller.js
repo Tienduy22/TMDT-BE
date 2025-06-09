@@ -22,6 +22,29 @@ module.exports.cashOnDelivery = async (req, res) => {
     });
 };
 
+module.exports.getNewOrder = async (req, res) => {
+    try {
+        const latestOrder = await Order.findOne().sort({ createdAt: -1 });
+
+        if (!latestOrder) {
+            return res.status(404).json({
+                success: false,
+                message: "Không tìm thấy đơn hàng nào",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Lấy đơn hàng mới nhất thành công",
+            latestOrder,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Lội hệ thống",
+        });
+    }
+};
+
 //[GET] /api/v1/client/order/:userId
 module.exports.getOrderOfUser = async (req, res) => {
     try {

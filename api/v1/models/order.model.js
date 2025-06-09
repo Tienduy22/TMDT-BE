@@ -23,6 +23,7 @@ const orderSchema = new mongoose.Schema(
         status:String,
         totalPrice: Number,
         payment: String,
+        txnRef: Date,
         deleted: {
             type: Boolean,
             default : false,
