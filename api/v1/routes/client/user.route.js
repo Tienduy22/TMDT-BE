@@ -27,6 +27,6 @@ router.post("/password/forgot", controller.forgotPassword)
 
 router.post("/password/otp", controller.otpPassword)
 
-router.post("/password/reset", controller.resetPassword) //sdas
+router.post("/password/reset/:user_id", controller.resetPassword) //sdas
 
 module.exports = router;

@@ -72,7 +72,7 @@ module.exports.delete = async (req, res) => {
 
         res.status(200).json({
             code: 200,
-            message: "Xóa user thành công"
+            message: "Xóa user thành công",
         });
     } catch (error) {
         res.status(500).json({
@@ -131,7 +131,7 @@ module.exports.login = async (req, res) => {
         return;
     }
 
-    if (md5(req.body.password) !== user.password) {
+    if (req.body.password !== user.password) {
         res.json({
             code: 400,
             message: "Sai mật khẩu",
@@ -177,6 +177,7 @@ module.exports.update = async (req, res) => {
         );
 
         res.status(200).json({
+            code: 200,
             user: user,
             message: "Cập nhật user thành công",
         });
@@ -326,16 +327,25 @@ module.exports.otpPassword = async (req, res) => {
 
 //[POST] api/v1/user/password/reset
 module.exports.resetPassword = async (req, res) => {
-    const token = req.body.tokenUser;
-    const password = req.body.password;
+    const user_id = req.params.user_id;
+    const { currentPassword, newPassword } = req.body;
 
     const user = await User.findOne({
-        tokenUser: token,
+        _id: user_id,
     });
 
-    if (md5(password) === user.password) {
+
+    if (currentPassword !== user.password) {
         res.json({
             code: 400,
+            message: "Mật khẩu cũ không chính xác",
+        });
+        return;
+    }
+
+    if (newPassword === user.password) {
+        res.json({
+            code: 401,
             message: "Mật khẩu mới không được giống mật khẩu cũ",
         });
         return;
@@ -343,10 +353,10 @@ module.exports.resetPassword = async (req, res) => {
 
     await User.updateOne(
         {
-            tokenUser: token,
+            _id: user_id,
         },
         {
-            password: md5(password),
+            password: newPassword,
         }
     );
 
