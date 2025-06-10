@@ -22,6 +22,26 @@ module.exports.cashOnDelivery = async (req, res) => {
     });
 };
 
+//[GET] /api/products/search
+module.exports.searchOrder = async (req, res) => {
+    try {
+        const keyword = req.query.keyword;
+        const regex = new RegExp(keyword, "i");
+
+        const orders = await Order.find({
+            "infoUser.name": { $regex: regex },
+        })
+
+        res.status(200).json({
+            orders: orders,
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+
+//[GET] /api/v1/client/order/new
 module.exports.getNewOrder = async (req, res) => {
     try {
         const latestOrder = await Order.findOne().sort({ createdAt: -1 });

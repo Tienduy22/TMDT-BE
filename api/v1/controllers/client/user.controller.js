@@ -83,7 +83,7 @@ module.exports.delete = async (req, res) => {
 
 // [POST] api/v1/user/register
 module.exports.register = async (req, res) => {
-    req.body.password = md5(req.body.password);
+    req.body.password = req.body.password;
 
     const existEmail = await User.findOne({
         email: req.body.email,
@@ -113,6 +113,24 @@ module.exports.register = async (req, res) => {
             code: 200,
             message: "Đăng ký thành công",
         });
+    }
+};
+
+//[GET] /api/v1/client/user/search
+module.exports.search = async (req, res) => {
+    try {
+        const keyword = req.query.keyword;
+        const regex = new RegExp(keyword, "i");
+
+        const users = await User.find({
+            fullName: { $regex: regex },
+        })
+
+        res.status(200).json({
+            users: users,
+        });
+    } catch (error) {
+        console.log(error);
     }
 };
 

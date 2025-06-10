@@ -78,6 +78,24 @@ module.exports.create = async (req, res) => {
     }
 };
 
+//[GET] /api/v1/admin/category/search
+module.exports.search = async (req, res) => {
+    try {
+        const keyword = req.query.keyword;
+        const regex = new RegExp(keyword, "i");
+
+        const categories = await ProductCategory.find({
+            title: { $regex: regex },
+        })
+
+        res.status(200).json({
+            categories: categories,
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
 //[PATCH] api/v1/product-category/edit/:id
 module.exports.edit = async (req, res) => {
     try {

@@ -7,6 +7,8 @@ router.get("/", controller.index);
 
 router.get("/detail/:id", controller.detail);
 
+router.get("/search", controller.search)
+
 router.post("/create",uploadToCloudinary, controller.create);
 
 router.patch("/edit/:id", uploadToCloudinary,controller.edit);

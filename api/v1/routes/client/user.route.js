@@ -5,6 +5,8 @@ const authenticateToken = require("../../../../middleware/auth.middleware");
 
 router.get("/", controller.userGet);
 
+router.get("/search", controller.search)
+
 router.get("/detail/:user_id", controller.detail);
 
 router.patch("/edit/:user_id", controller.edit);
