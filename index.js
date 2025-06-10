@@ -11,7 +11,7 @@ const routeClient = require("./api/v1/routes/client/index.route");
 database.connect();
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(bodyParser.json());
 app.use(cookieParser());
